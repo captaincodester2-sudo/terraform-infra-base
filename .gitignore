@@ -1,0 +1,12 @@
+# Providers descargados
+.terraform/
+
+# Archivos de State
+*.tfstate
+*.tfstate.*
+
+# Variables
+*.tfvars
+
+# Log de fallos de terraform
+crash.log
