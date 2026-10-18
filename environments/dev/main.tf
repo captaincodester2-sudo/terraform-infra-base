@@ -34,3 +34,15 @@ module "identity" {
   bucket_name = var.bucket_name
   prefix      = var.prefix
 }
+
+module "kinesis" {
+  source      = "../../modules/kinesis"
+  shard_count = var.shard_count
+  environment = var.environment
+}
+
+module "storage" {
+  source        = "../../modules/storage"
+  bucket_name   = var.bucket_name
+  force_destroy = var.force_destroy
+}

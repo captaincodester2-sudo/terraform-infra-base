@@ -17,3 +17,23 @@ output "audit_readonly_role_arn" {
   description = "ARN del rol iam audit_readonly"
   value       = module.identity.audit_readonly_role_arn
 }
+
+output "stream_arn" {
+  description = "ARN del stream"
+  value       = module.kinesis.stream_arn
+}
+
+output "stream_name" {
+  description = "Nombre del stream"
+  value       = module.kinesis.stream_name
+}
+
+output "bucket_s3_datalake_arn" {
+  description = "ARN del bucket s3"
+  value       = module.storage.bucket_s3_datalake_arn
+}
+
+output "bucket_s3_datalake_name" {
+  description = "Nombre del bucket s3"
+  value       = module.storage.bucket_s3_datalake_name
+}
