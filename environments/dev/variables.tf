@@ -28,6 +28,12 @@ variable "prefix" {
   default     = "silver-zone"
 }
 
+variable "firehose_prefix" {
+  type        = string
+  description = "Nombre de la carpeta perteneciente al bucket S3 del firehose en donde almacena datos crudos"
+  default     = "bronze-zone/ingesta"
+}
+
 variable "shard_count" {
   type        = number
   description = "Cantidad de shards para entorno - Cada shard acepta hasta 1MB/s"

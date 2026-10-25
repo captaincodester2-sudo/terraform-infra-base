@@ -36,9 +36,11 @@ module "identity" {
 }
 
 module "kinesis" {
-  source      = "../../modules/kinesis"
-  shard_count = var.shard_count
-  environment = var.environment
+  source          = "../../modules/kinesis"
+  shard_count     = var.shard_count
+  environment     = var.environment
+  bucket_arn      = module.storage.bucket_s3_datalake_arn
+  firehose_prefix = var.firehose_prefix
 }
 
 module "storage" {
