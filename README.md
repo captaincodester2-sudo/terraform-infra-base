@@ -129,7 +129,7 @@ Un ejemplo del plan está en [PLAN_OUTPUT.md](PLAN_OUTPUT.md).
 Para eliminar todo lo creado: `terraform destroy` (desde `environments/dev`).
 El bucket y la tabla del backend no se borran con ese comando.
 
-> **Cuidado con los costos:** Kinesis cobra por cada shard mientras exista, aunque
+> **Ojo con los costos:** Kinesis cobra por cada shard mientras exista, aunque
 > no le mandes datos. Conviene correr `terraform destroy` apenas termines de
 > probar.
 
@@ -146,7 +146,20 @@ aws kinesis put-record \
   --region us-east-1
 ```
 
-Si salió bien, devuelve el `ShardId` y un `SequenceNumber`.
+Si salió bien, devuelve el `ShardId` y un `SequenceNumber`:
+
+```json
+{
+    "ShardId": "shardId-000000000000",
+    "SequenceNumber": "49679624229476933169030243327259011417478885962088972290",
+    "EncryptionType": "KMS"
+}
+```
+
+La clave `user-001` es solo para este evento de prueba. En un productor real
+la clave tiene que variar (por ejemplo un `uuid` o el `sensor_id`): si todos
+los datos usan la misma clave, caen en un solo shard (hot shard) y se pierde
+el beneficio de tener más de uno.
 
 Firehose junta los datos durante unos 60 segundos antes de guardarlos. Pasado
 ese tiempo, el archivo aparece en el bucket:
@@ -155,8 +168,30 @@ ese tiempo, el archivo aparece en el bucket:
 aws s3 ls s3://pochipa-datalake-dev/ --recursive
 ```
 
-La salida real de esta prueba, con el archivo generado por Firehose, está en
-[EVIDENCIA.md](EVIDENCIA.md).
+Salida real de esta prueba (archivo generado por Firehose):
+
+```
+2026-10-26 10:06:40         40 bronze-zone/ingesta/year=2026/month=10/day=26/dev-ingestion-firehose-1-2026-10-26-10-05-39-cbda9621-1eca-41e2-a546-5430116bb3c8
+```
+
+Contenido del archivo (es el mismo dato que mandé):
+
+```
+{"sensor_id":"s-001","temperature":22.5}
+```
+
+El detalle completo de la prueba está en [EVIDENCIA.md](EVIDENCIA.md).
+
+## Por qué 2 shards
+
+Cada shard acepta hasta 1 MB/s de entrada. Para un throughput de 2 MB/s
+hacen falta 2 MB/s ÷ 1 MB/s por shard = **2 shards**.
+
+## Qué quedó pendiente
+
+No hice la prueba con 100 registros y distintas claves de partición para ver
+el reparto entre shards en CloudWatch, porque implicaba volver a levantar la
+infraestructura (Kinesis cobra por shard). Lo dejé para una próxima práctica.
 
 ## Variables
 
