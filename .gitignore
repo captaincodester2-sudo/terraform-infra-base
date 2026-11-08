@@ -10,3 +10,5 @@
 
 # Log de fallos de terraform
 crash.log
+*.jar
+*.zip
