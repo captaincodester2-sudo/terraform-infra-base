@@ -7,9 +7,9 @@ CREATE TABLE sensores (
     WATERMARK FOR event_time AS event_time - INTERVAL '10' SECOND
 ) WITH (
     'connector' = 'kinesis',
-    'stream' = 'dev-ingestion-stream',
-    'aws.region' = 'us-east-1',
-    'scan.stream.initpos' = 'LATEST',
+    'stream.arn' = '{stream_arn}',
+    'aws.region' = '{region}',
+    'source.init.position' = '{init_position}',
     'format' = 'json',
     'json.timestamp-format.standard' = 'ISO-8601'
 )

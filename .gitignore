@@ -12,3 +12,7 @@
 crash.log
 *.jar
 *.zip
+
+.venv/
+target/
+dependency-reduced-pom.xml

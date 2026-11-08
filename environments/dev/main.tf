@@ -48,3 +48,23 @@ module "storage" {
   bucket_name   = var.bucket_name
   force_destroy = var.force_destroy
 }
+
+data "aws_kms_alias" "kinesis" {
+  name = "alias/aws/kinesis"
+}
+
+module "flink" {
+  source = "../../modules/flink"
+
+  environment            = var.environment
+  region                 = var.region
+  stream_name            = module.kinesis.stream_name
+  stream_arn             = module.kinesis.stream_arn
+  kms_key_arn            = data.aws_kms_alias.kinesis.target_key_arn
+  bucket_name            = var.bucket_name
+  bucket_arn             = module.storage.bucket_s3_datalake_arn
+  code_prefix            = "flink/code"
+  source_dir             = "${path.root}/../../app"
+  parallelism            = 1
+  checkpoint_interval_ms = 60000
+}
